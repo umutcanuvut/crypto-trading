@@ -1,11 +1,8 @@
 import React, { useEffect, useState } from "react";
 import ApexCharts from "react-apexcharts";
 import { fetchHistoricalData } from "../utils/fetchHistoricalData";
-
-interface Candle {
-  x: Date;
-  y: [number, number, number, number];
-}
+import { subscribeToKline } from "../utils/klineSocket";
+import { Candle, Kline } from "../types";
 
 const CandlestickChart: React.FC = () => {
   const [series, setSeries] = useState<{ data: Candle[] }[]>([]);
@@ -16,7 +13,32 @@ const CandlestickChart: React.FC = () => {
       setSeries([{ data: historicalData }]);
     };
 
-    fetchData();
+    const handleKlineUpdate = (kline: Kline) => {
+      setSeries((prevSeries) => {
+        const newData = [...prevSeries[0].data];
+        const newCandle: Candle = {
+          x: new Date(kline.t),
+          y: [
+            parseFloat(kline.o),
+            parseFloat(kline.h),
+            parseFloat(kline.l),
+            parseFloat(kline.c),
+          ],
+        };
+        newData.push(newCandle);
+        if (newData.length > 24) {
+          newData.shift();
+        }
+        return [{ data: newData }];
+      });
+    };
+
+    fetchData().then(() => {
+      const unsubscribe = subscribeToKline("BTCUSDT", "1m", handleKlineUpdate);
+      return () => {
+        unsubscribe();
+      };
+    });
   }, []);
 
   const options = {
@@ -42,12 +64,6 @@ const CandlestickChart: React.FC = () => {
         offsetX: -6,
       },
     },
-    // grid: {
-    //   padding: {
-    //     left: -10,
-    //     right: 10,
-    //   },
-    // },
   };
 
   return (
