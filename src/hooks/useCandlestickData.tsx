@@ -1,0 +1,44 @@
+import { useState, useEffect } from "react";
+import { fetchHistoricalData } from "../api/fetchHistoricalData";
+import { subscribeToKline } from "../api/klineSocket";
+import { Candle, Kline } from "../types";
+import { processKlineData } from "../utils/processKlineData";
+
+const useCandlestickData = () => {
+  const [series, setSeries] = useState<{ data: Candle[] }[]>([]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const historicalData = await fetchHistoricalData();
+      setSeries([{ data: historicalData }]);
+    };
+
+    const handleKlineUpdate = (kline: Kline) => {
+      setSeries((prevSeries) => {
+        const newData = [...prevSeries[0].data];
+        const newCandle = processKlineData(kline);
+        const lastCandle = newData[newData.length - 1];
+        if (lastCandle && lastCandle.x.getTime() === newCandle.x.getTime()) {
+          newData[newData.length - 1] = newCandle;
+        } else {
+          newData.push(newCandle);
+          if (newData.length > 24) {
+            newData.shift();
+          }
+        }
+        return [{ data: newData }];
+      });
+    };
+
+    fetchData().then(() => {
+      const unsubscribe = subscribeToKline("BTCUSDT", "1m", handleKlineUpdate);
+      return () => {
+        unsubscribe();
+      };
+    });
+  }, []);
+
+  return series;
+};
+
+export default useCandlestickData;

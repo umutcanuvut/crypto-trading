@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { subscribeToTicker } from "../utils/aggTradeSocket";
+import { subscribeToTicker } from "../api/aggTradeSocket";
 
 const BtcUsdtLive: React.FC = () => {
   const [price, setPrice] = useState<string | null>(null);
