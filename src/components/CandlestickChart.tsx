@@ -25,9 +25,14 @@ const CandlestickChart: React.FC = () => {
             parseFloat(kline.c),
           ],
         };
-        newData.push(newCandle);
-        if (newData.length > 24) {
-          newData.shift();
+        const lastCandle = newData[newData.length - 1];
+        if (lastCandle && lastCandle.x.getTime() === newCandle.x.getTime()) {
+          newData[newData.length - 1] = newCandle;
+        } else {
+          newData.push(newCandle);
+          if (newData.length > 24) {
+            newData.shift();
+          }
         }
         return [{ data: newData }];
       });

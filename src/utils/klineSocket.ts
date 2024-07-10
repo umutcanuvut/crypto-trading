@@ -14,7 +14,7 @@ export const subscribeToKline = (
 
   klineSocket.onmessage = (event) => {
     const message: KlineMessage = JSON.parse(event.data);
-    if (message.e === "kline" && message.k.x) {
+    if (message.e === "kline") {
       callback(message.k);
     }
   };
