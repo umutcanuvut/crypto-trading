@@ -1,21 +1,27 @@
 import React from "react";
 import useOrderBookData from "../hooks/useOrderBookData";
 
-const OrderBook: React.FC = () => {
-  const orderBook = useOrderBookData();
+interface OrderBookProps {
+  pair: string;
+}
+
+const OrderBook: React.FC<OrderBookProps> = ({ pair }) => {
+  const orderBook = useOrderBookData(pair);
+
+  const [baseCurrency, quoteCurrency] = pair.split("/");
 
   return (
     <div>
-      <h2>Order Book</h2>
+      <h2>{pair} Order Book</h2>
       <div className="order-book">
         <div className="order-book-bids">
           <h3>Bids</h3>
           <table>
             <thead>
               <tr>
-                <th>Price (USDT)</th>
-                <th>Amount (BTC)</th>
-                <th>Total (USDT)</th>
+                <th>Price ({quoteCurrency})</th>
+                <th>Amount ({baseCurrency})</th>
+                <th>Total ({quoteCurrency})</th>
               </tr>
             </thead>
             <tbody>
@@ -34,9 +40,9 @@ const OrderBook: React.FC = () => {
           <table>
             <thead>
               <tr>
-                <th>Price (USDT)</th>
-                <th>Amount (BTC)</th>
-                <th>Total (USDT)</th>
+                <th>Price ({quoteCurrency})</th>
+                <th>Amount ({baseCurrency})</th>
+                <th>Total ({quoteCurrency})</th>
               </tr>
             </thead>
             <tbody>

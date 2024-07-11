@@ -12,7 +12,7 @@ interface OrderBookData {
   asks: OrderBookEntry[];
 }
 
-const useOrderBookData = (): OrderBookData => {
+const useOrderBookData = (pair: string): OrderBookData => {
   const [orderBook, setOrderBook] = useState<OrderBookData>({
     lastUpdateId: 0,
     bids: [],
@@ -20,11 +20,14 @@ const useOrderBookData = (): OrderBookData => {
   });
 
   useEffect(() => {
-    const url = `wss://stream.binance.com:9443/ws/btcusdt@depth20@1000ms`;
+    const formattedPair = pair.replace("/", "").toLowerCase();
+    const url = `wss://stream.binance.com:9443/ws/${formattedPair}@depth20@1000ms`;
     const orderBookSocket = new WebSocket(url);
 
+    console.log(`Connecting to Binance Order Book WebSocket for ${pair}`);
+
     orderBookSocket.onopen = () => {
-      console.log("Connected to Binance Order Book WebSocket");
+      console.log(`Connected to Binance Order Book WebSocket for ${pair}`);
     };
 
     orderBookSocket.onmessage = (event) => {
@@ -45,17 +48,25 @@ const useOrderBookData = (): OrderBookData => {
     };
 
     orderBookSocket.onclose = () => {
-      console.log("Disconnected from Binance Order Book WebSocket");
+      console.log(`Disconnected from Binance Order Book WebSocket for ${pair}`);
     };
 
     orderBookSocket.onerror = (error) => {
-      console.error("Order Book WebSocket error: ", error);
+      console.error(`Order Book WebSocket error for ${pair}: `, error);
     };
 
     return () => {
+      console.log(
+        `Unsubscribing from Binance Order Book WebSocket for ${pair}`,
+      );
       orderBookSocket.close();
+      setOrderBook({
+        lastUpdateId: 0,
+        bids: [],
+        asks: [],
+      });
     };
-  }, []);
+  }, [pair]);
 
   return orderBook;
 };

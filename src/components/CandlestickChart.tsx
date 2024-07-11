@@ -2,9 +2,13 @@ import React, { useState } from "react";
 import ApexCharts from "react-apexcharts";
 import useCandlestickData from "../hooks/useCandlestickData";
 
-const CandlestickChart: React.FC = () => {
+interface CandlestickChartProps {
+  pair: string;
+}
+
+const CandlestickChart: React.FC<CandlestickChartProps> = ({ pair }) => {
   const [timeframe, setTimeframe] = useState("1m");
-  const series = useCandlestickData(timeframe);
+  const series = useCandlestickData(pair, timeframe);
 
   const options = {
     chart: {
@@ -18,7 +22,7 @@ const CandlestickChart: React.FC = () => {
       },
     },
     title: {
-      text: `BTC/USDT Candlestick Chart (${timeframe})`,
+      text: `${pair} Candlestick Chart (${timeframe})`,
       align: "left" as const,
     },
     xaxis: {
