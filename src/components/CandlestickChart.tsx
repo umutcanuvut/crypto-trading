@@ -20,29 +20,62 @@ const CandlestickChart: React.FC<CandlestickChartProps> = ({ pair }) => {
       zoom: {
         enabled: false,
       },
+      background: "#1f2937",
+      foreColor: "#e5e7eb",
     },
     title: {
       text: `${pair} Candlestick Chart (${timeframe})`,
       align: "left" as const,
+      style: {
+        color: "#e5e7eb",
+      },
     },
     xaxis: {
       type: "datetime" as const,
+      labels: {
+        style: {
+          colors: "#e5e7eb",
+        },
+      },
     },
     yaxis: {
       labels: {
         offsetX: -6,
+        style: {
+          colors: "#e5e7eb",
+        },
+      },
+    },
+    tooltip: {
+      theme: "dark",
+      style: {
+        fontSize: "12px",
+        backgroundColor: "#1f2937",
+        color: "#e5e7eb",
+      },
+      onDatasetHover: {
+        highlightDataSeries: true,
+      },
+      x: {
+        show: false,
       },
     },
   };
 
   return (
-    <div>
-      <div>
-        <label htmlFor="timeframe">Timeframe:</label>
+    <div className="rounded-lg border border-gray-700 bg-gray-800 p-4 text-white shadow-md">
+      <div className="mb-4">
+        <label
+          htmlFor="timeframe"
+          className="block text-sm font-medium text-gray-400"
+        >
+          Timeframe:
+        </label>
         <select
           id="timeframe"
           value={timeframe}
           onChange={(e) => setTimeframe(e.target.value)}
+          className="mt-1 block w-fit rounded-md border border-gray-600 bg-gray-700 px-3 py-2 text-white shadow-sm focus:border-blue-500 focus:outline-none focus:ring-blue-500 sm:text-sm"
         >
           <option value="1m">1m</option>
           <option value="5m">5m</option>
@@ -56,6 +89,7 @@ const CandlestickChart: React.FC<CandlestickChartProps> = ({ pair }) => {
         series={series}
         type="candlestick"
         height={350}
+        width={820}
       />
     </div>
   );

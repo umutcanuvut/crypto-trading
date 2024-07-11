@@ -21,7 +21,7 @@ const useOrderBookData = (pair: string): OrderBookData => {
 
   useEffect(() => {
     const formattedPair = pair.replace("/", "").toLowerCase();
-    const url = `wss://stream.binance.com:9443/ws/${formattedPair}@depth20@1000ms`;
+    const url = `wss://stream.binance.com:9443/ws/${formattedPair}@depth10@1000ms`;
     const orderBookSocket = new WebSocket(url);
 
     console.log(`Connecting to Binance Order Book WebSocket for ${pair}`);
