@@ -1,20 +1,8 @@
-import React, { useEffect, useState } from "react";
-import { subscribeToTicker } from "../api/aggTradeSocket";
+import React from "react";
+import useTickerData from "../hooks/useTickerData";
 
 const BtcUsdtLive: React.FC = () => {
-  const [price, setPrice] = useState<string | null>(null);
-
-  useEffect(() => {
-    const unsubscribe = subscribeToTicker((data) => {
-      setPrice(data.p);
-    });
-
-    return () => {
-      if (unsubscribe) {
-        unsubscribe();
-      }
-    };
-  }, []);
+  const price = useTickerData();
 
   return (
     <div>
