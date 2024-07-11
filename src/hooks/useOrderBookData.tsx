@@ -32,18 +32,32 @@ const useOrderBookData = (pair: string): OrderBookData => {
 
     orderBookSocket.onmessage = (event) => {
       const data = JSON.parse(event.data);
-      setOrderBook({
-        lastUpdateId: data.lastUpdateId,
-        bids: data.bids.map((bid: string[]) => ({
+      const sortedBids = data.bids
+        .map((bid: string[]) => ({
           price: bid[0],
           quantity: bid[1],
           total: (parseFloat(bid[0]) * parseFloat(bid[1])).toFixed(2),
-        })),
-        asks: data.asks.map((ask: string[]) => ({
+        }))
+        .sort(
+          (a: OrderBookEntry, b: OrderBookEntry) =>
+            parseFloat(b.price) - parseFloat(a.price),
+        );
+
+      const sortedAsks = data.asks
+        .map((ask: string[]) => ({
           price: ask[0],
           quantity: ask[1],
           total: (parseFloat(ask[0]) * parseFloat(ask[1])).toFixed(2),
-        })),
+        }))
+        .sort(
+          (a: OrderBookEntry, b: OrderBookEntry) =>
+            parseFloat(b.price) - parseFloat(a.price),
+        );
+
+      setOrderBook({
+        lastUpdateId: data.lastUpdateId,
+        bids: sortedBids,
+        asks: sortedAsks,
       });
     };
 
