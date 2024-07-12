@@ -1,12 +1,13 @@
-import { useState } from "react";
 import CandlestickChart from "./components/CandlestickChart";
 import LivePrice from "./components/LivePrice";
 import OrderBook from "./components/OrderBook";
 import CreateOrder from "./components/createOrder/CreateOrder";
 import BalanceInfo from "./components/BalanceInfo";
+import useStore from "./store/useStore";
 
 function App() {
-  const [selectedPair, setSelectedPair] = useState("BTC/USDT");
+  const selectedPair = useStore((state) => state.selectedPair);
+  const setSelectedPair = useStore((state) => state.setSelectedPair);
 
   return (
     <div className="bg-gray-900 text-white">
@@ -32,17 +33,17 @@ function App() {
                 <option value="XRP/USDT">XRP/USDT</option>
               </select>
             </div>
-            <LivePrice pair={selectedPair} />
+            <LivePrice />
           </div>
           <BalanceInfo />
         </div>
         <div className="flex flex-row gap-7">
           <div className="mt-6 flex w-full max-w-4xl flex-col space-y-8">
-            <CandlestickChart pair={selectedPair} />
+            <CandlestickChart />
             <CreateOrder />
           </div>
           <div className="mt-6 w-full max-w-4xl">
-            <OrderBook pair={selectedPair} />
+            <OrderBook />
           </div>
         </div>
       </div>

@@ -1,12 +1,16 @@
 import React from "react";
 import useOrderBookData from "../hooks/useOrderBookData";
 import formatPrice from "../utils/formatPrice";
+import useStore from "../store/useStore";
 
-interface OrderBookProps {
-  pair: string;
-}
-
-const OrderBook: React.FC<OrderBookProps> = ({ pair }) => {
+const OrderBook: React.FC = () => {
+  const pair = useStore((state) => state.selectedPair);
+  const setSelectedBuyPriceFromOrderBook = useStore(
+    (state) => state.setSelectedBuyPriceFromOrderBook,
+  );
+  const setSelectedSellPriceFromOrderBook = useStore(
+    (state) => state.setSelectedSellPriceFromOrderBook,
+  );
   const orderBook = useOrderBookData(pair);
 
   const [baseCurrency, quoteCurrency] = pair.split("/") as [
@@ -37,7 +41,13 @@ const OrderBook: React.FC<OrderBookProps> = ({ pair }) => {
               </thead>
               <tbody className="divide-y divide-gray-700 bg-gray-800">
                 {orderBook.asks.map((ask, index) => (
-                  <tr key={index} className="bg-red-900 hover:bg-red-700">
+                  <tr
+                    key={index}
+                    className="cursor-pointer bg-red-900 hover:bg-red-700"
+                    onClick={() =>
+                      setSelectedBuyPriceFromOrderBook(parseFloat(ask.price))
+                    }
+                  >
                     <td className="px-4 py-2 text-sm text-red-400">
                       {formatPrice(quoteCurrency, parseFloat(ask.price))}
                     </td>
@@ -72,7 +82,13 @@ const OrderBook: React.FC<OrderBookProps> = ({ pair }) => {
               </thead>
               <tbody className="divide-y divide-gray-700 bg-gray-800">
                 {orderBook.bids.map((bid, index) => (
-                  <tr key={index} className="bg-green-900 hover:bg-green-700">
+                  <tr
+                    key={index}
+                    className="cursor-pointer bg-green-900 hover:bg-green-700"
+                    onClick={() =>
+                      setSelectedSellPriceFromOrderBook(parseFloat(bid.price))
+                    }
+                  >
                     <td className="px-4 py-2 text-sm text-green-400">
                       {formatPrice(quoteCurrency, parseFloat(bid.price))}
                     </td>

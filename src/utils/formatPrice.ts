@@ -1,4 +1,4 @@
-type Currency = "USDT" | "BTC" | "ETH" | "LTC" | "XRP";
+export type Currency = "USDT" | "BTC" | "ETH" | "LTC" | "XRP";
 
 const formatPrice = (currency: Currency, price: number): string => {
   let precision: number;

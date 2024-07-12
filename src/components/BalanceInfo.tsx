@@ -1,16 +1,22 @@
 import React, { useState } from "react";
+import useStore from "../store/useStore";
+import formatPrice from "../utils/formatPrice";
 
 const BalanceInfo: React.FC = () => {
+  const { balances, setBalance, resetBalances } = useStore();
   const [initialBalance, setInitialBalance] = useState("");
-  const [confirmedBalance, setConfirmedBalance] = useState("0.0000");
 
   const handleConfirm = () => {
-    setConfirmedBalance(initialBalance);
+    const usdtBalance = parseFloat(initialBalance);
+    if (!isNaN(usdtBalance)) {
+      setBalance("USDT", usdtBalance);
+    }
+    setInitialBalance("");
   };
 
   const handleReset = () => {
     setInitialBalance("");
-    setConfirmedBalance("0.0000");
+    resetBalances();
   };
 
   return (
@@ -50,23 +56,23 @@ const BalanceInfo: React.FC = () => {
         <h3 className="text-lg font-semibold text-gray-300">Balance Info</h3>
         <div className="flex justify-between">
           <span>USDT:</span>
-          <span>{confirmedBalance}</span>
+          <span>{formatPrice("USDT", balances.USDT)}</span>
         </div>
         <div className="flex justify-between">
           <span>BTC:</span>
-          <span>0.0000</span>
+          <span>{formatPrice("BTC", balances.BTC)}</span>
         </div>
         <div className="flex justify-between">
           <span>ETH:</span>
-          <span>0.0000</span>
+          <span>{formatPrice("ETH", balances.ETH)}</span>
         </div>
         <div className="flex justify-between">
           <span>LTC:</span>
-          <span>0.0000</span>
+          <span>{formatPrice("LTC", balances.LTC)}</span>
         </div>
         <div className="flex justify-between">
           <span>XRP:</span>
-          <span>0.0000</span>
+          <span>{formatPrice("XRP", balances.XRP)}</span>
         </div>
       </div>
     </div>

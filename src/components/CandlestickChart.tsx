@@ -2,13 +2,11 @@ import React, { useState } from "react";
 import ApexCharts from "react-apexcharts";
 import useCandlestickData from "../hooks/useCandlestickData";
 import formatPrice from "../utils/formatPrice";
+import useStore from "../store/useStore";
 
-interface CandlestickChartProps {
-  pair: string;
-}
-
-const CandlestickChart: React.FC<CandlestickChartProps> = ({ pair }) => {
+const CandlestickChart: React.FC = () => {
   const [timeframe, setTimeframe] = useState("1m");
+  const pair = useStore((state) => state.selectedPair);
   const series = useCandlestickData(pair, timeframe);
 
   const quoteCurrency = pair.split("/")[1] as
