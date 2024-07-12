@@ -35,6 +35,8 @@ const OrderSection: React.FC<OrderSectionProps> = ({
     (state) => state.selectedSellPriceFromOrderBook,
   );
 
+  const addOrder = useStore((state) => state.addOrder);
+
   useEffect(() => {
     if (orderType === "Limit") {
       if (type === "Buy" && selectedBuyPriceFromOrderBook !== null) {
@@ -50,6 +52,25 @@ const OrderSection: React.FC<OrderSectionProps> = ({
     type,
     setPrice,
   ]);
+
+  const handleSubmit = () => {
+    if (!isBalanceValid) return;
+
+    const newOrder = {
+      id: Date.now(),
+      type,
+      orderType,
+      price,
+      amount,
+      priceUnit: quoteCurrency,
+      amountUnit: baseCurrency,
+      orderCreationDate: new Date().toLocaleString("en-GB"),
+      orderCompleteDate: null,
+      status: "Pending" as const,
+    };
+
+    addOrder(newOrder);
+  };
 
   return (
     <div className="rounded bg-gray-800 p-4 text-white shadow-md">
@@ -77,6 +98,7 @@ const OrderSection: React.FC<OrderSectionProps> = ({
           !isBalanceValid ? "cursor-not-allowed opacity-50" : "hover:opacity-75"
         } ${color}`}
         disabled={!isBalanceValid}
+        onClick={handleSubmit}
       >
         {type} {orderType}
       </button>

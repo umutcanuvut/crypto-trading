@@ -4,6 +4,7 @@ import OrderBook from "./components/OrderBook";
 import CreateOrder from "./components/createOrder/CreateOrder";
 import BalanceInfo from "./components/BalanceInfo";
 import useStore from "./store/useStore";
+import OrderHistory from "./components/OrderHistory";
 
 function App() {
   const selectedPair = useStore((state) => state.selectedPair);
@@ -46,6 +47,7 @@ function App() {
             <OrderBook />
           </div>
         </div>
+        <OrderHistory />{" "}
       </div>
     </div>
   );
