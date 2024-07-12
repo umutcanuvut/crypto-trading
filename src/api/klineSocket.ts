@@ -10,7 +10,7 @@ export const subscribeToKline = (
   const klineSocket = new WebSocket(url);
 
   klineSocket.onopen = () => {
-    console.log(`Connected to Binance ${pair} ${interval} Kline WebSocket`);
+    // console.log(`Connected to Binance ${pair} ${interval} Kline WebSocket`);
   };
 
   klineSocket.onmessage = (event) => {
@@ -21,9 +21,9 @@ export const subscribeToKline = (
   };
 
   klineSocket.onclose = () => {
-    console.log(
-      `Disconnected from Binance ${pair} ${interval} Kline WebSocket`,
-    );
+    // console.log(
+    //   `Disconnected from Binance ${pair} ${interval} Kline WebSocket`,
+    // );
   };
 
   klineSocket.onerror = (error) => {
@@ -31,9 +31,9 @@ export const subscribeToKline = (
   };
 
   return () => {
-    console.log(
-      `Unsubscribing from Binance ${pair} ${interval} Kline WebSocket`,
-    );
+    // console.log(
+    //   `Unsubscribing from Binance ${pair} ${interval} Kline WebSocket`,
+    // );
     klineSocket.close();
   };
 };

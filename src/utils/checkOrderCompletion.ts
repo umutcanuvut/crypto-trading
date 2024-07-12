@@ -2,13 +2,17 @@ import { Order, OrderBookData } from "../types";
 
 export const checkOrderCompletion = (
   pendingOrders: Order[],
-  orderBook: OrderBookData,
+  orderBooks: Record<string, OrderBookData>,
 ): Order[] => {
   const completedOrders: Order[] = [];
 
   pendingOrders.forEach((order) => {
     if (order.status === "Pending" && order.orderType === "Limit") {
       const price = parseFloat(order.price);
+      const pair = `${order.amountUnit}/${order.priceUnit}`;
+
+      const orderBook = orderBooks[pair];
+      if (!orderBook) return;
 
       if (order.type === "Buy") {
         const matchingAsks = orderBook.asks.filter(

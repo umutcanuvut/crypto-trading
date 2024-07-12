@@ -18,8 +18,8 @@ interface AppState {
   addOrder: (order: Order) => void;
   cancelOrder: (id: number) => void;
   clearOrderHistory: () => void;
-  orderBook: OrderBookData;
-  setOrderBook: (orderBook: OrderBookData) => void;
+  orderBooks: Record<string, OrderBookData>;
+  setOrderBook: (pair: string, orderBook: OrderBookData) => void;
 }
 
 const useStore = create<AppState>()(
@@ -93,7 +93,7 @@ const useStore = create<AppState>()(
 
         const completedOrders = checkOrderCompletion(
           get().orderHistory,
-          get().orderBook,
+          get().orderBooks,
         );
         set((state) => ({
           orderHistory: state.orderHistory.map((order) =>
@@ -151,19 +151,22 @@ const useStore = create<AppState>()(
           };
         });
       },
-
-      orderBook: {
-        lastUpdateId: 0,
-        bids: [],
-        asks: [],
+      orderBooks: {
+        "BTC/USDT": { lastUpdateId: 0, bids: [], asks: [] },
+        "ETH/USDT": { lastUpdateId: 0, bids: [], asks: [] },
+        "LTC/USDT": { lastUpdateId: 0, bids: [], asks: [] },
+        "XRP/USDT": { lastUpdateId: 0, bids: [], asks: [] },
       },
-      setOrderBook: (orderBook) => {
-        set({
-          orderBook,
-        });
+      setOrderBook: (pair, orderBook) => {
+        set((state) => ({
+          orderBooks: {
+            ...state.orderBooks,
+            [pair]: orderBook,
+          },
+        }));
         const completedOrders = checkOrderCompletion(
           get().orderHistory,
-          orderBook,
+          get().orderBooks,
         );
         set((state) => ({
           orderHistory: state.orderHistory.map((order) =>

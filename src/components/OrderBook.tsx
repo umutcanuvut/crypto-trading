@@ -11,9 +11,9 @@ const OrderBook: React.FC = () => {
   const setSelectedSellPriceFromOrderBook = useStore(
     (state) => state.setSelectedSellPriceFromOrderBook,
   );
-  const orderBook = useStore((state) => state.orderBook);
+  const orderBook = useStore((state) => state.orderBooks[pair]);
 
-  useOrderBookData(pair);
+  useOrderBookData();
 
   const [baseCurrency, quoteCurrency] = pair.split("/") as [
     "USDT" | "BTC" | "ETH" | "LTC" | "XRP",
@@ -42,7 +42,7 @@ const OrderBook: React.FC = () => {
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-700 bg-gray-800">
-                {orderBook.asks.map((ask, index) => (
+                {orderBook?.asks.map((ask, index) => (
                   <tr
                     key={index}
                     className="cursor-pointer bg-red-900 hover:bg-red-700"
@@ -83,7 +83,7 @@ const OrderBook: React.FC = () => {
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-700 bg-gray-800">
-                {orderBook.bids.map((bid, index) => (
+                {orderBook?.bids.map((bid, index) => (
                   <tr
                     key={index}
                     className="cursor-pointer bg-green-900 hover:bg-green-700"

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import useOrderForm from "../../hooks/useOrderForm";
 import PriceInput from "./PriceInput";
 import AmountInput from "./AmountInput";
@@ -31,30 +31,34 @@ const OrderSection: React.FC<OrderSectionProps> = ({
   const selectedBuyPriceFromOrderBook = useStore(
     (state) => state.selectedBuyPriceFromOrderBook,
   );
+  const setSelectedBuyPriceFromOrderBook = useStore(
+    (state) => state.setSelectedBuyPriceFromOrderBook,
+  );
   const selectedSellPriceFromOrderBook = useStore(
     (state) => state.selectedSellPriceFromOrderBook,
   );
+  const setSelectedSellPriceFromOrderBook = useStore(
+    (state) => state.setSelectedSellPriceFromOrderBook,
+  );
 
-  const orderBook = useStore((state) => state.orderBook);
+  const orderBooks = useStore((state) => state.orderBooks);
   const addOrder = useStore((state) => state.addOrder);
   const setBalance = useStore((state) => state.setBalance);
-
-  const [isUserSetPrice, setIsUserSetPrice] = useState(false);
+  const pair = `${baseCurrency}/${quoteCurrency}`;
+  const orderBook = orderBooks[pair];
 
   useEffect(() => {
-    if (!isUserSetPrice) {
-      if (orderType === "Limit") {
-        if (type === "Buy" && selectedBuyPriceFromOrderBook !== null) {
-          setPrice(selectedBuyPriceFromOrderBook.toString());
-        } else if (type === "Sell" && selectedSellPriceFromOrderBook !== null) {
-          setPrice(selectedSellPriceFromOrderBook.toString());
-        }
-      } else if (orderType === "Market") {
-        if (type === "Buy" && orderBook.asks.length > 0) {
-          setPrice(orderBook.asks[orderBook.asks.length - 1].price);
-        } else if (type === "Sell" && orderBook.bids.length > 0) {
-          setPrice(orderBook.bids[0].price);
-        }
+    if (orderType === "Limit") {
+      if (type === "Buy" && selectedBuyPriceFromOrderBook !== null) {
+        setPrice(selectedBuyPriceFromOrderBook.toString());
+      } else if (type === "Sell" && selectedSellPriceFromOrderBook !== null) {
+        setPrice(selectedSellPriceFromOrderBook.toString());
+      }
+    } else if (orderType === "Market") {
+      if (type === "Buy" && orderBook.asks.length > 0) {
+        setPrice(orderBook.asks[orderBook.asks.length - 1].price);
+      } else if (type === "Sell" && orderBook.bids.length > 0) {
+        setPrice(orderBook.bids[0].price);
       }
     }
   }, [
@@ -64,12 +68,11 @@ const OrderSection: React.FC<OrderSectionProps> = ({
     orderType,
     type,
     setPrice,
-    isUserSetPrice,
   ]);
 
-  // Handle manual price changes
   const handlePriceChange = (newPrice: string) => {
-    setIsUserSetPrice(true);
+    setSelectedBuyPriceFromOrderBook(null);
+    setSelectedSellPriceFromOrderBook(null);
     setPrice(newPrice);
   };
 

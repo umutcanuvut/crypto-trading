@@ -11,7 +11,7 @@ const useTickerData = (pair: string): string | null => {
     const tickerSocket = new WebSocket(url);
 
     tickerSocket.onopen = () => {
-      console.log(`Connected to Binance Ticker WebSocket for ${pair}`);
+      // console.log(`Connected to Binance Ticker WebSocket for ${pair}`);
     };
 
     tickerSocket.onmessage = (event) => {
@@ -20,7 +20,7 @@ const useTickerData = (pair: string): string | null => {
     };
 
     tickerSocket.onclose = () => {
-      console.log(`Disconnected from Binance Ticker WebSocket for ${pair}`);
+      // console.log(`Disconnected from Binance Ticker WebSocket for ${pair}`);
     };
 
     tickerSocket.onerror = (error) => {
@@ -28,7 +28,7 @@ const useTickerData = (pair: string): string | null => {
     };
 
     return () => {
-      console.log(`Unsubscribing from Binance Ticker WebSocket for ${pair}`);
+      // console.log(`Unsubscribing from Binance Ticker WebSocket for ${pair}`);
       tickerSocket.close();
     };
   }, [pair]);
