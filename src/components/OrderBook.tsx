@@ -1,5 +1,6 @@
 import React from "react";
 import useOrderBookData from "../hooks/useOrderBookData";
+import formatPrice from "../utils/formatPrice";
 
 interface OrderBookProps {
   pair: string;
@@ -8,7 +9,10 @@ interface OrderBookProps {
 const OrderBook: React.FC<OrderBookProps> = ({ pair }) => {
   const orderBook = useOrderBookData(pair);
 
-  const [baseCurrency, quoteCurrency] = pair.split("/");
+  const [baseCurrency, quoteCurrency] = pair.split("/") as [
+    "USDT" | "BTC" | "ETH" | "LTC" | "XRP",
+    "USDT" | "BTC" | "ETH" | "LTC" | "XRP",
+  ];
 
   return (
     <div className="w-[400px] rounded-lg border border-gray-700 bg-gray-800 p-4 text-white shadow-md">
@@ -23,10 +27,10 @@ const OrderBook: React.FC<OrderBookProps> = ({ pair }) => {
                   <th className="px-4 py-2 text-left text-sm font-medium text-gray-300">
                     Price ({quoteCurrency})
                   </th>
-                  <th className="px-4 py-2 text-left text-sm font-medium text-gray-300">
+                  <th className="px-4 py-2 text-right text-sm font-medium text-gray-300">
                     Amount ({baseCurrency})
                   </th>
-                  <th className="px-4 py-2 text-left text-sm font-medium text-gray-300">
+                  <th className="px-4 py-2 text-right text-sm font-medium text-gray-300">
                     Total ({quoteCurrency})
                   </th>
                 </tr>
@@ -35,13 +39,13 @@ const OrderBook: React.FC<OrderBookProps> = ({ pair }) => {
                 {orderBook.asks.map((ask, index) => (
                   <tr key={index} className="bg-red-900 hover:bg-red-700">
                     <td className="px-4 py-2 text-sm text-red-400">
-                      {ask.price}
+                      {formatPrice(quoteCurrency, parseFloat(ask.price))}
                     </td>
-                    <td className="px-4 py-2 text-sm text-gray-300">
-                      {ask.quantity}
+                    <td className="px-4 py-2 text-right text-sm text-gray-300">
+                      {formatPrice(baseCurrency, parseFloat(ask.quantity))}
                     </td>
-                    <td className="px-4 py-2 text-sm text-gray-300">
-                      {ask.total}
+                    <td className="px-4 py-2 text-right text-sm text-gray-300">
+                      {formatPrice(quoteCurrency, parseFloat(ask.total))}
                     </td>
                   </tr>
                 ))}
@@ -58,10 +62,10 @@ const OrderBook: React.FC<OrderBookProps> = ({ pair }) => {
                   <th className="px-4 py-2 text-left text-sm font-medium text-gray-300">
                     Price ({quoteCurrency})
                   </th>
-                  <th className="px-4 py-2 text-left text-sm font-medium text-gray-300">
+                  <th className="px-4 py-2 text-right text-sm font-medium text-gray-300">
                     Amount ({baseCurrency})
                   </th>
-                  <th className="px-4 py-2 text-left text-sm font-medium text-gray-300">
+                  <th className="px-4 py-2 text-right text-sm font-medium text-gray-300">
                     Total ({quoteCurrency})
                   </th>
                 </tr>
@@ -70,13 +74,13 @@ const OrderBook: React.FC<OrderBookProps> = ({ pair }) => {
                 {orderBook.bids.map((bid, index) => (
                   <tr key={index} className="bg-green-900 hover:bg-green-700">
                     <td className="px-4 py-2 text-sm text-green-400">
-                      {bid.price}
+                      {formatPrice(quoteCurrency, parseFloat(bid.price))}
                     </td>
-                    <td className="px-4 py-2 text-sm text-gray-300">
-                      {bid.quantity}
+                    <td className="px-4 py-2 text-right text-sm text-gray-300">
+                      {formatPrice(baseCurrency, parseFloat(bid.quantity))}
                     </td>
-                    <td className="px-4 py-2 text-sm text-gray-300">
-                      {bid.total}
+                    <td className="px-4 py-2 text-right text-sm text-gray-300">
+                      {formatPrice(quoteCurrency, parseFloat(bid.total))}
                     </td>
                   </tr>
                 ))}

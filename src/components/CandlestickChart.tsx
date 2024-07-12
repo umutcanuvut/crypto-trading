@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import ApexCharts from "react-apexcharts";
 import useCandlestickData from "../hooks/useCandlestickData";
+import formatPrice from "../utils/formatPrice";
 
 interface CandlestickChartProps {
   pair: string;
@@ -9,6 +10,13 @@ interface CandlestickChartProps {
 const CandlestickChart: React.FC<CandlestickChartProps> = ({ pair }) => {
   const [timeframe, setTimeframe] = useState("1m");
   const series = useCandlestickData(pair, timeframe);
+
+  const quoteCurrency = pair.split("/")[1] as
+    | "USDT"
+    | "BTC"
+    | "ETH"
+    | "LTC"
+    | "XRP";
 
   const options = {
     chart: {
@@ -44,6 +52,7 @@ const CandlestickChart: React.FC<CandlestickChartProps> = ({ pair }) => {
         style: {
           colors: "#e5e7eb",
         },
+        formatter: (value: number) => formatPrice(quoteCurrency, value), // Format y-axis labels
       },
     },
     tooltip: {
