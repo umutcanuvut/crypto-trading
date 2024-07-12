@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import useOrderForm from "../../hooks/useOrderForm";
 import PriceInput from "./PriceInput";
 import AmountInput from "./AmountInput";
@@ -35,23 +35,43 @@ const OrderSection: React.FC<OrderSectionProps> = ({
     (state) => state.selectedSellPriceFromOrderBook,
   );
 
+  const orderBook = useStore((state) => state.orderBook);
   const addOrder = useStore((state) => state.addOrder);
+  const setBalance = useStore((state) => state.setBalance);
+
+  const [isUserSetPrice, setIsUserSetPrice] = useState(false);
 
   useEffect(() => {
-    if (orderType === "Limit") {
-      if (type === "Buy" && selectedBuyPriceFromOrderBook !== null) {
-        setPrice(selectedBuyPriceFromOrderBook.toString());
-      } else if (type === "Sell" && selectedSellPriceFromOrderBook !== null) {
-        setPrice(selectedSellPriceFromOrderBook.toString());
+    if (!isUserSetPrice) {
+      if (orderType === "Limit") {
+        if (type === "Buy" && selectedBuyPriceFromOrderBook !== null) {
+          setPrice(selectedBuyPriceFromOrderBook.toString());
+        } else if (type === "Sell" && selectedSellPriceFromOrderBook !== null) {
+          setPrice(selectedSellPriceFromOrderBook.toString());
+        }
+      } else if (orderType === "Market") {
+        if (type === "Buy" && orderBook.asks.length > 0) {
+          setPrice(orderBook.asks[orderBook.asks.length - 1].price);
+        } else if (type === "Sell" && orderBook.bids.length > 0) {
+          setPrice(orderBook.bids[0].price);
+        }
       }
     }
   }, [
     selectedBuyPriceFromOrderBook,
     selectedSellPriceFromOrderBook,
+    orderBook,
     orderType,
     type,
     setPrice,
+    isUserSetPrice,
   ]);
+
+  // Handle manual price changes
+  const handlePriceChange = (newPrice: string) => {
+    setIsUserSetPrice(true);
+    setPrice(newPrice);
+  };
 
   const handleSubmit = () => {
     if (!isBalanceValid) return;
@@ -65,9 +85,38 @@ const OrderSection: React.FC<OrderSectionProps> = ({
       priceUnit: quoteCurrency,
       amountUnit: baseCurrency,
       orderCreationDate: new Date().toLocaleString("en-GB"),
-      orderCompleteDate: null,
-      status: "Pending" as const,
+      orderCompleteDate:
+        orderType === "Market" ? new Date().toLocaleString("en-GB") : null,
+      status:
+        orderType === "Market" ? ("Completed" as const) : ("Pending" as const),
     };
+
+    const priceValue = parseFloat(price);
+    const amountValue = parseFloat(amount);
+
+    if (orderType === "Market") {
+      if (type === "Buy") {
+        setBalance(
+          quoteCurrency,
+          useStore.getState().balances[quoteCurrency] -
+            priceValue * amountValue,
+        );
+        setBalance(
+          baseCurrency,
+          useStore.getState().balances[baseCurrency] + amountValue,
+        );
+      } else if (type === "Sell") {
+        setBalance(
+          baseCurrency,
+          useStore.getState().balances[baseCurrency] - amountValue,
+        );
+        setBalance(
+          quoteCurrency,
+          useStore.getState().balances[quoteCurrency] +
+            priceValue * amountValue,
+        );
+      }
+    }
 
     addOrder(newOrder);
   };
@@ -79,7 +128,7 @@ const OrderSection: React.FC<OrderSectionProps> = ({
         type={type}
         orderType={orderType}
         price={price}
-        setPrice={setPrice}
+        setPrice={handlePriceChange}
         quoteCurrency={quoteCurrency}
       />
       <AmountInput

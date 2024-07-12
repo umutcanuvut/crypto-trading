@@ -1,23 +1,9 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
+import useStore from "../store/useStore";
+import { OrderBookEntry } from "../types";
 
-interface OrderBookEntry {
-  price: string;
-  quantity: string;
-  total: string;
-}
-
-interface OrderBookData {
-  lastUpdateId: number;
-  bids: OrderBookEntry[];
-  asks: OrderBookEntry[];
-}
-
-const useOrderBookData = (pair: string): OrderBookData => {
-  const [orderBook, setOrderBook] = useState<OrderBookData>({
-    lastUpdateId: 0,
-    bids: [],
-    asks: [],
-  });
+const useOrderBookData = (pair: string) => {
+  const setOrderBook = useStore((state) => state.setOrderBook);
 
   useEffect(() => {
     const formattedPair = pair.replace("/", "").toLowerCase();
@@ -80,9 +66,7 @@ const useOrderBookData = (pair: string): OrderBookData => {
         asks: [],
       });
     };
-  }, [pair]);
-
-  return orderBook;
+  }, [pair, setOrderBook]);
 };
 
 export default useOrderBookData;

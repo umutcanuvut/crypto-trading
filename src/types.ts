@@ -58,3 +58,28 @@ export interface KlineMessage {
   s: string; // Symbol
   k: Kline; // Kline data
 }
+
+export interface OrderBookEntry {
+  price: string;
+  quantity: string;
+  total: string;
+}
+
+export interface OrderBookData {
+  lastUpdateId: number;
+  bids: OrderBookEntry[];
+  asks: OrderBookEntry[];
+}
+
+export interface Order {
+  id: number;
+  type: "Buy" | "Sell";
+  orderType: "Limit" | "Market";
+  price: string;
+  amount: string;
+  priceUnit: string;
+  amountUnit: string;
+  orderCreationDate: string;
+  orderCompleteDate: string | null;
+  status: "Pending" | "Cancelled" | "Completed";
+}

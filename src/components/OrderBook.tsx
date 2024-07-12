@@ -11,7 +11,9 @@ const OrderBook: React.FC = () => {
   const setSelectedSellPriceFromOrderBook = useStore(
     (state) => state.setSelectedSellPriceFromOrderBook,
   );
-  const orderBook = useOrderBookData(pair);
+  const orderBook = useStore((state) => state.orderBook);
+
+  useOrderBookData(pair);
 
   const [baseCurrency, quoteCurrency] = pair.split("/") as [
     "USDT" | "BTC" | "ETH" | "LTC" | "XRP",
