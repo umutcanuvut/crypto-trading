@@ -44,3 +44,39 @@ This project is a cryptocurrency trading simulator built with React, TypeScript,
    ```bash
    npm run dev
    ```
+
+## File Structure
+
+- **src**
+  - **api**
+    - `fetchHistoricalData.ts`: Fetches historical data for candlestick charts.
+    - `klineSocket.ts`: Manages WebSocket connections for live candlestick data.
+  - **components**
+    - `BalanceInfo.tsx`: Displays user balance information.
+    - `CandlestickChart.tsx`: Displays candlestick chart with live data.
+    - `LivePrice.tsx`: Displays the live price of a selected cryptocurrency.
+    - `OrderBook.tsx`: Displays the order book with buy and sell orders.
+    - **createOrder**
+      - `AmountInput.tsx`: Input component for order amount.
+      - `AmountRange.tsx`: Slider component for selecting order amount.
+      - `CreateOrder.tsx`: Main component for creating orders.
+      - `OrderForm.tsx`: Form component for entering order details.
+      - `OrderSection.tsx`: Section component for organizing order-related inputs.
+      - `PriceInput.tsx`: Input component for order price.
+    - `OrderHistory.tsx`: Displays historical orders.
+  - **hooks**
+    - `useCandlestickData.tsx`: Custom hook for managing candlestick data.
+    - `useOrderBookData.tsx`: Custom hook for managing order book data.
+    - `useOrderForm.tsx`: Custom hook for managing the order form state.
+    - `useTickerData.tsx`: Custom hook for managing live ticker data.
+  - **store**
+    - `useStore.ts`: Zustand store for managing global state.
+  - **utils**
+    - `checkOrderCompletion.ts`: Utility function to check order completion.
+    - `formatPrice.ts`: Utility function to format prices.
+    - `processKlineData.ts`: Utility function to process candlestick data.
+    - `validateBalance.ts`: Utility function to validate user balance.
+  - `App.tsx`: Main application component.
+  - `index.css`: Global CSS styles.
+  - `main.tsx`: Entry point of the application.
+  - `types.ts`: TypeScript type definitions.
