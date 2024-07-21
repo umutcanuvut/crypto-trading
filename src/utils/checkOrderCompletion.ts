@@ -19,18 +19,22 @@ export const checkOrderCompletion = (
           (ask) => parseFloat(ask.price) <= price,
         );
         if (matchingAsks.length > 0) {
-          order.status = "Completed";
-          order.orderCompleteDate = new Date().toLocaleString("en-GB");
-          completedOrders.push(order);
+          completedOrders.push({
+            ...order,
+            status: "Completed",
+            orderCompleteDate: new Date().toISOString(),
+          });
         }
       } else if (order.type === "Sell") {
         const matchingBids = orderBook.bids.filter(
           (bid) => parseFloat(bid.price) >= price,
         );
         if (matchingBids.length > 0) {
-          order.status = "Completed";
-          order.orderCompleteDate = new Date().toLocaleString("en-GB");
-          completedOrders.push(order);
+          completedOrders.push({
+            ...order,
+            status: "Completed",
+            orderCompleteDate: new Date().toISOString(),
+          });
         }
       }
     }

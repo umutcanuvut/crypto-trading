@@ -1,6 +1,6 @@
 import React from "react";
 import useStore from "../store/useStore";
-import { format } from "date-fns";
+import { format, isValid } from "date-fns";
 import formatPrice, { Currency } from "../utils/formatPrice";
 
 const OrderHistory: React.FC = () => {
@@ -22,7 +22,11 @@ const OrderHistory: React.FC = () => {
   };
 
   const formatDate = (date: string) => {
-    return format(new Date(date), "dd/MM/yyyy HH:mm:ss");
+    const dateObj = new Date(date);
+    if (!isValid(dateObj)) {
+      return "Invalid Date";
+    }
+    return format(dateObj, "dd/MM/yyyy HH:mm:ss"); // Include hours, minutes, and seconds
   };
 
   const sortedOrderHistory = [...orderHistory].sort(

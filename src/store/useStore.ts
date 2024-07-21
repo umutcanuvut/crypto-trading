@@ -15,6 +15,7 @@ interface AppState {
   setBalance: (currency: Currency, amount: number) => void;
   resetBalances: () => void;
   orderHistory: Order[];
+  setOrderHistory: (orders: Order[]) => void;
   addOrder: (order: Order) => void;
   cancelOrder: (id: number) => void;
   clearOrderHistory: () => void;
@@ -58,6 +59,7 @@ const useStore = create<AppState>()(
           },
         }),
       orderHistory: [],
+      setOrderHistory: (orders) => set({ orderHistory: orders }),
       clearOrderHistory: () =>
         set({
           orderHistory: [],
@@ -95,17 +97,40 @@ const useStore = create<AppState>()(
           get().orderHistory,
           get().orderBooks,
         );
-        set((state) => ({
-          orderHistory: state.orderHistory.map((order) =>
-            completedOrders.includes(order)
-              ? {
-                  ...order,
-                  status: "Completed",
-                  orderCompleteDate: new Date().toLocaleString("en-GB"),
-                }
-              : order,
-          ),
-        }));
+
+        // Update balances for completed orders
+        completedOrders.forEach((order) => {
+          const priceValue = parseFloat(order.price);
+          const amountValue = parseFloat(order.amount);
+
+          if (order.type === "Buy") {
+            set((state) => ({
+              balances: {
+                ...state.balances,
+                [order.amountUnit as Currency]:
+                  state.balances[order.amountUnit as Currency] + amountValue,
+              },
+            }));
+          } else if (order.type === "Sell") {
+            set((state) => ({
+              balances: {
+                ...state.balances,
+                [order.priceUnit as Currency]:
+                  state.balances[order.priceUnit as Currency] +
+                  priceValue * amountValue,
+              },
+            }));
+          }
+        });
+
+        const updatedOrderHistory = get().orderHistory.map(
+          (order) =>
+            completedOrders.find(
+              (completedOrder) => completedOrder.id === order.id,
+            ) || order,
+        );
+
+        get().setOrderHistory(updatedOrderHistory);
       },
       cancelOrder: (id) => {
         set((state) => {
@@ -164,21 +189,45 @@ const useStore = create<AppState>()(
             [pair]: orderBook,
           },
         }));
+
         const completedOrders = checkOrderCompletion(
           get().orderHistory,
           get().orderBooks,
         );
-        set((state) => ({
-          orderHistory: state.orderHistory.map((order) =>
-            completedOrders.includes(order)
-              ? {
-                  ...order,
-                  status: "Completed",
-                  orderCompleteDate: new Date().toLocaleString("en-GB"),
-                }
-              : order,
-          ),
-        }));
+
+        // Update balances for completed orders
+        completedOrders.forEach((order) => {
+          const priceValue = parseFloat(order.price);
+          const amountValue = parseFloat(order.amount);
+
+          if (order.type === "Buy") {
+            set((state) => ({
+              balances: {
+                ...state.balances,
+                [order.amountUnit as Currency]:
+                  state.balances[order.amountUnit as Currency] + amountValue,
+              },
+            }));
+          } else if (order.type === "Sell") {
+            set((state) => ({
+              balances: {
+                ...state.balances,
+                [order.priceUnit as Currency]:
+                  state.balances[order.priceUnit as Currency] +
+                  priceValue * amountValue,
+              },
+            }));
+          }
+        });
+
+        const updatedOrderHistory = get().orderHistory.map(
+          (order) =>
+            completedOrders.find(
+              (completedOrder) => completedOrder.id === order.id,
+            ) || order,
+        );
+
+        get().setOrderHistory(updatedOrderHistory);
       },
     }),
     {

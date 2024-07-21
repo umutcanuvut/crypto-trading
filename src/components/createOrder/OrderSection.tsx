@@ -87,9 +87,8 @@ const OrderSection: React.FC<OrderSectionProps> = ({
       amount,
       priceUnit: quoteCurrency,
       amountUnit: baseCurrency,
-      orderCreationDate: new Date().toLocaleString("en-GB"),
-      orderCompleteDate:
-        orderType === "Market" ? new Date().toLocaleString("en-GB") : null,
+      orderCreationDate: new Date().toISOString(),
+      orderCompleteDate: orderType === "Market" ? new Date().toISOString() : "",
       status:
         orderType === "Market" ? ("Completed" as const) : ("Pending" as const),
     };
@@ -147,7 +146,9 @@ const OrderSection: React.FC<OrderSectionProps> = ({
       />
       <button
         className={`mt-4 w-full rounded py-2 text-white ${
-          !isBalanceValid ? "cursor-not-allowed opacity-50" : "hover:opacity-75"
+          !isBalanceValid || parseFloat(amount) <= 0
+            ? "cursor-not-allowed opacity-50"
+            : "hover:opacity-75"
         } ${color}`}
         disabled={!isBalanceValid}
         onClick={handleSubmit}
