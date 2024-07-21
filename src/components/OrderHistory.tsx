@@ -1,12 +1,14 @@
 import React from "react";
-import useStore from "../store/useStore";
 import { format, isValid } from "date-fns";
 import formatPrice, { Currency } from "../utils/formatPrice";
+import useOrderHistoryStore from "../store/useOrderHistoryStore";
 
 const OrderHistory: React.FC = () => {
-  const orderHistory = useStore((state) => state.orderHistory);
-  const cancelOrder = useStore((state) => state.cancelOrder);
-  const clearOrderHistory = useStore((state) => state.clearOrderHistory);
+  const orderHistory = useOrderHistoryStore((state) => state.orderHistory);
+  const cancelOrder = useOrderHistoryStore((state) => state.cancelOrder);
+  const clearOrderHistory = useOrderHistoryStore(
+    (state) => state.clearOrderHistory,
+  );
 
   const getStatusColor = (status: string) => {
     switch (status) {

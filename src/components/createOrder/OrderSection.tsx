@@ -3,7 +3,8 @@ import useOrderForm from "../../hooks/useOrderForm";
 import PriceInput from "./PriceInput";
 import AmountInput from "./AmountInput";
 import AmountRange from "./AmountRange";
-import useStore from "../../store/useStore";
+import useOrderBookStore from "../../store/useOrderBookStore";
+import useOrderHistoryStore from "../../store/useOrderHistoryStore";
 
 interface OrderSectionProps {
   type: "Buy" | "Sell";
@@ -28,22 +29,21 @@ const OrderSection: React.FC<OrderSectionProps> = ({
     quoteCurrency,
   } = useOrderForm(type, orderType);
 
-  const selectedBuyPriceFromOrderBook = useStore(
+  const selectedBuyPriceFromOrderBook = useOrderBookStore(
     (state) => state.selectedBuyPriceFromOrderBook,
   );
-  const setSelectedBuyPriceFromOrderBook = useStore(
+  const setSelectedBuyPriceFromOrderBook = useOrderBookStore(
     (state) => state.setSelectedBuyPriceFromOrderBook,
   );
-  const selectedSellPriceFromOrderBook = useStore(
+  const selectedSellPriceFromOrderBook = useOrderBookStore(
     (state) => state.selectedSellPriceFromOrderBook,
   );
-  const setSelectedSellPriceFromOrderBook = useStore(
+  const setSelectedSellPriceFromOrderBook = useOrderBookStore(
     (state) => state.setSelectedSellPriceFromOrderBook,
   );
 
-  const orderBooks = useStore((state) => state.orderBooks);
-  const addOrder = useStore((state) => state.addOrder);
-  const setBalance = useStore((state) => state.setBalance);
+  const orderBooks = useOrderBookStore((state) => state.orderBooks);
+  const addOrder = useOrderHistoryStore((state) => state.addOrder);
   const pair = `${baseCurrency}/${quoteCurrency}`;
   const orderBook = orderBooks[pair];
 
@@ -92,33 +92,6 @@ const OrderSection: React.FC<OrderSectionProps> = ({
       status:
         orderType === "Market" ? ("Completed" as const) : ("Pending" as const),
     };
-
-    const priceValue = parseFloat(price);
-    const amountValue = parseFloat(amount);
-
-    if (orderType === "Market") {
-      if (type === "Buy") {
-        setBalance(
-          quoteCurrency,
-          useStore.getState().balances[quoteCurrency] -
-            priceValue * amountValue,
-        );
-        setBalance(
-          baseCurrency,
-          useStore.getState().balances[baseCurrency] + amountValue,
-        );
-      } else if (type === "Sell") {
-        setBalance(
-          baseCurrency,
-          useStore.getState().balances[baseCurrency] - amountValue,
-        );
-        setBalance(
-          quoteCurrency,
-          useStore.getState().balances[quoteCurrency] +
-            priceValue * amountValue,
-        );
-      }
-    }
 
     addOrder(newOrder);
   };

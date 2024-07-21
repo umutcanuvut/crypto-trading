@@ -3,11 +3,11 @@ import ApexCharts from "react-apexcharts";
 import { TIME_INTERVALS, PricePrecision } from "../constants";
 import useCandlestickData from "../hooks/useCandlestickData";
 import formatPrice from "../utils/formatPrice";
-import useStore from "../store/useStore";
+import useSelectedPairStore from "../store/useSelectedPairStore";
 
 const CandlestickChart: React.FC = () => {
   const [timeframe, setTimeframe] = useState(TIME_INTERVALS[0]);
-  const pair = useStore((state) => state.selectedPair);
+  const pair = useSelectedPairStore((state) => state.selectedPair);
   const series = useCandlestickData(pair, timeframe);
 
   const quoteCurrency = pair.split("/")[1] as keyof typeof PricePrecision;

@@ -1,17 +1,18 @@
 import React from "react";
 import useOrderBookData from "../hooks/useOrderBookData";
 import formatPrice from "../utils/formatPrice";
-import useStore from "../store/useStore";
+import useSelectedPairStore from "../store/useSelectedPairStore";
+import useOrderBookStore from "../store/useOrderBookStore";
 
 const OrderBook: React.FC = () => {
-  const pair = useStore((state) => state.selectedPair);
-  const setSelectedBuyPriceFromOrderBook = useStore(
+  const pair = useSelectedPairStore((state) => state.selectedPair);
+  const setSelectedBuyPriceFromOrderBook = useOrderBookStore(
     (state) => state.setSelectedBuyPriceFromOrderBook,
   );
-  const setSelectedSellPriceFromOrderBook = useStore(
+  const setSelectedSellPriceFromOrderBook = useOrderBookStore(
     (state) => state.setSelectedSellPriceFromOrderBook,
   );
-  const orderBook = useStore((state) => state.orderBooks[pair]);
+  const orderBook = useOrderBookStore((state) => state.orderBooks[pair]);
 
   useOrderBookData();
 
