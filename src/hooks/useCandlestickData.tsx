@@ -3,6 +3,7 @@ import { fetchHistoricalData } from "../api/fetchHistoricalData";
 import { subscribeToKline } from "../api/klineSocket";
 import { Candle, Kline } from "../types";
 import { processKlineData } from "../utils/processKlineData";
+import { DATA_LIMIT } from "../constants";
 
 const useCandlestickData = (pair: string, timeframe: string) => {
   const [series, setSeries] = useState<{ data: Candle[] }[]>([]);
@@ -24,7 +25,7 @@ const useCandlestickData = (pair: string, timeframe: string) => {
           newData[newData.length - 1] = newCandle;
         } else {
           newData.push(newCandle);
-          if (newData.length > 24) {
+          if (newData.length > DATA_LIMIT) {
             newData.shift();
           }
         }

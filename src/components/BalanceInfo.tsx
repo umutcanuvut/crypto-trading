@@ -1,9 +1,11 @@
 import React, { useState } from "react";
-import useStore from "../store/useStore";
+import useBalanceStore from "../store/useBalanceStore";
 import formatPrice from "../utils/formatPrice";
 
 const BalanceInfo: React.FC = () => {
-  const { balances, setBalance, resetBalances } = useStore();
+  const balances = useBalanceStore((state) => state.balances);
+  const setBalance = useBalanceStore((state) => state.setBalance);
+  const resetBalances = useBalanceStore((state) => state.resetBalances);
   const [initialBalance, setInitialBalance] = useState("");
 
   const handleConfirm = () => {

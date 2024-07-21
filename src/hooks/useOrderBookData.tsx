@@ -1,11 +1,11 @@
 import { useEffect } from "react";
-import useStore from "../store/useStore";
+import useOrderBookStore from "../store/useOrderBookStore";
 import { OrderBookEntry } from "../types";
 
 const pairs = ["BTC/USDT", "ETH/BTC", "LTC/USDT", "XRP/USDT"];
 
 const useOrderBookData = () => {
-  const setOrderBook = useStore((state) => state.setOrderBook);
+  const setOrderBook = useOrderBookStore((state) => state.setOrderBook);
 
   useEffect(() => {
     const sockets: WebSocket[] = [];
@@ -54,7 +54,7 @@ const useOrderBookData = () => {
 
       orderBookSocket.onclose = () => {
         // console.log(
-        //   `Disconnected from Binance Order Book WebSocket for ${pair}`,
+        //   `Disconnected from Binance Order Book WebSocket for ${pair}`
         // );
       };
 

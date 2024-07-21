@@ -1,4 +1,5 @@
 import { Candle, BinanceCandle } from "../types";
+import { DATA_LIMIT } from "../constants";
 
 export const fetchHistoricalData = async (
   pair: string,
@@ -6,7 +7,7 @@ export const fetchHistoricalData = async (
 ): Promise<Candle[]> => {
   const formattedPair = pair.replace("/", "");
   const response = await fetch(
-    `https://api.binance.com/api/v3/klines?symbol=${formattedPair}&interval=${timeframe}&limit=24`,
+    `https://api.binance.com/api/v3/klines?symbol=${formattedPair}&interval=${timeframe}&limit=${DATA_LIMIT}`,
   );
   const data: BinanceCandle[] = await response.json();
   return data.map((candle) => ({

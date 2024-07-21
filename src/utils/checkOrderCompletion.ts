@@ -1,3 +1,5 @@
+import { toast } from "react-toastify";
+import { format } from "date-fns";
 import { Order, OrderBookData } from "../types";
 
 export const checkOrderCompletion = (
@@ -19,18 +21,30 @@ export const checkOrderCompletion = (
           (ask) => parseFloat(ask.price) <= price,
         );
         if (matchingAsks.length > 0) {
-          order.status = "Completed";
-          order.orderCompleteDate = new Date().toLocaleString("en-GB");
-          completedOrders.push(order);
+          const completedOrder: Order = {
+            ...order,
+            status: "Completed",
+            orderCompleteDate: new Date().toISOString(),
+          };
+          completedOrders.push(completedOrder);
+          toast.success(
+            `Your ${completedOrder.type} Limit Order created at ${format(completedOrder.orderCreationDate, "dd/MM/yyyy HH:mm:ss")} is completed!`,
+          );
         }
       } else if (order.type === "Sell") {
         const matchingBids = orderBook.bids.filter(
           (bid) => parseFloat(bid.price) >= price,
         );
         if (matchingBids.length > 0) {
-          order.status = "Completed";
-          order.orderCompleteDate = new Date().toLocaleString("en-GB");
-          completedOrders.push(order);
+          const completedOrder: Order = {
+            ...order,
+            status: "Completed",
+            orderCompleteDate: new Date().toISOString(),
+          };
+          completedOrders.push(completedOrder);
+          toast.success(
+            `Your ${completedOrder.type} Limit Order created at ${format(completedOrder.orderCreationDate, "dd/MM/yyyy HH:mm:ss")} is completed!`,
+          );
         }
       }
     }

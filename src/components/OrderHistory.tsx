@@ -1,12 +1,14 @@
 import React from "react";
-import useStore from "../store/useStore";
-import { format } from "date-fns";
+import { format, isValid } from "date-fns";
 import formatPrice, { Currency } from "../utils/formatPrice";
+import useOrderHistoryStore from "../store/useOrderHistoryStore";
 
 const OrderHistory: React.FC = () => {
-  const orderHistory = useStore((state) => state.orderHistory);
-  const cancelOrder = useStore((state) => state.cancelOrder);
-  const clearOrderHistory = useStore((state) => state.clearOrderHistory);
+  const orderHistory = useOrderHistoryStore((state) => state.orderHistory);
+  const cancelOrder = useOrderHistoryStore((state) => state.cancelOrder);
+  const clearOrderHistory = useOrderHistoryStore(
+    (state) => state.clearOrderHistory,
+  );
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -22,7 +24,11 @@ const OrderHistory: React.FC = () => {
   };
 
   const formatDate = (date: string) => {
-    return format(new Date(date), "dd/MM/yyyy HH:mm:ss");
+    const dateObj = new Date(date);
+    if (!isValid(dateObj)) {
+      return "Invalid Date";
+    }
+    return format(dateObj, "dd/MM/yyyy HH:mm:ss"); // Include hours, minutes, and seconds
   };
 
   const sortedOrderHistory = [...orderHistory].sort(

@@ -1,20 +1,16 @@
 import React, { useState } from "react";
 import ApexCharts from "react-apexcharts";
+import { TIME_INTERVALS, PricePrecision } from "../constants";
 import useCandlestickData from "../hooks/useCandlestickData";
 import formatPrice from "../utils/formatPrice";
-import useStore from "../store/useStore";
+import useSelectedPairStore from "../store/useSelectedPairStore";
 
 const CandlestickChart: React.FC = () => {
-  const [timeframe, setTimeframe] = useState("1m");
-  const pair = useStore((state) => state.selectedPair);
+  const [timeframe, setTimeframe] = useState(TIME_INTERVALS[0]);
+  const pair = useSelectedPairStore((state) => state.selectedPair);
   const series = useCandlestickData(pair, timeframe);
 
-  const quoteCurrency = pair.split("/")[1] as
-    | "USDT"
-    | "BTC"
-    | "ETH"
-    | "LTC"
-    | "XRP";
+  const quoteCurrency = pair.split("/")[1] as keyof typeof PricePrecision;
 
   const options = {
     chart: {
@@ -50,7 +46,7 @@ const CandlestickChart: React.FC = () => {
         style: {
           colors: "#e5e7eb",
         },
-        formatter: (value: number) => formatPrice(quoteCurrency, value), // Format y-axis labels
+        formatter: (value: number) => formatPrice(quoteCurrency, value),
       },
     },
     tooltip: {
@@ -84,11 +80,11 @@ const CandlestickChart: React.FC = () => {
           onChange={(e) => setTimeframe(e.target.value)}
           className="mt-1 block w-fit rounded-md border border-gray-600 bg-gray-700 px-3 py-2 text-white shadow-sm focus:border-blue-500 focus:outline-none focus:ring-blue-500 sm:text-sm"
         >
-          <option value="1m">1m</option>
-          <option value="5m">5m</option>
-          <option value="15m">15m</option>
-          <option value="1h">1h</option>
-          <option value="12h">12h</option>
+          {TIME_INTERVALS.map((interval) => (
+            <option key={interval} value={interval}>
+              {interval}
+            </option>
+          ))}
         </select>
       </div>
       <ApexCharts

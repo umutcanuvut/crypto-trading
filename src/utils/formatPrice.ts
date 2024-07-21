@@ -1,28 +1,9 @@
-export type Currency = "USDT" | "BTC" | "ETH" | "LTC" | "XRP";
+import { PricePrecision } from "../constants";
+
+export type Currency = keyof typeof PricePrecision;
 
 const formatPrice = (currency: Currency, price: number): string => {
-  let precision: number;
-
-  switch (currency) {
-    case "USDT":
-      precision = 2;
-      break;
-    case "BTC":
-      precision = 5;
-      break;
-    case "ETH":
-      precision = 4;
-      break;
-    case "LTC":
-      precision = 3;
-      break;
-    case "XRP":
-      precision = 3;
-      break;
-    default:
-      precision = 2;
-  }
-
+  const precision = PricePrecision[currency] || 2;
   return price.toFixed(precision);
 };
 

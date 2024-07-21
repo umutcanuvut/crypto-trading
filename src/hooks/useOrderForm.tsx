@@ -1,11 +1,13 @@
 import { useState, useEffect } from "react";
-import useStore from "../store/useStore";
+import useSelectedPairStore from "../store/useSelectedPairStore";
+import useBalanceStore from "../store/useBalanceStore";
 import validateBalance from "../utils/validateBalance";
 import formatPrice, { Currency } from "../utils/formatPrice";
 
 const useOrderForm = (type: "Buy" | "Sell", orderType: "Limit" | "Market") => {
-  const { selectedPair, balances } = useStore();
-  const [price, setPrice] = useState(orderType === "Market" ? "1000" : "");
+  const selectedPair = useSelectedPairStore((state) => state.selectedPair);
+  const balances = useBalanceStore((state) => state.balances);
+  const [price, setPrice] = useState(orderType === "Market" ? "0" : "");
   const [amount, setAmount] = useState("");
   const [rangeValue, setRangeValue] = useState(0);
 

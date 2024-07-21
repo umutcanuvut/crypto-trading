@@ -1,10 +1,10 @@
 import React from "react";
 import useTickerData from "../hooks/useTickerData";
 import formatPrice from "../utils/formatPrice";
-import useStore from "../store/useStore";
+import useSelectedPairStore from "../store/useSelectedPairStore";
 
 const LivePrice: React.FC = () => {
-  const selectedPair = useStore((state) => state.selectedPair);
+  const selectedPair = useSelectedPairStore((state) => state.selectedPair);
   const price = useTickerData(selectedPair);
 
   const quoteCurrency = selectedPair.split("/")[1] as

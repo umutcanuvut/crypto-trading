@@ -3,7 +3,8 @@ import useOrderForm from "../../hooks/useOrderForm";
 import PriceInput from "./PriceInput";
 import AmountInput from "./AmountInput";
 import AmountRange from "./AmountRange";
-import useStore from "../../store/useStore";
+import useOrderBookStore from "../../store/useOrderBookStore";
+import useOrderHistoryStore from "../../store/useOrderHistoryStore";
 
 interface OrderSectionProps {
   type: "Buy" | "Sell";
@@ -28,31 +29,30 @@ const OrderSection: React.FC<OrderSectionProps> = ({
     quoteCurrency,
   } = useOrderForm(type, orderType);
 
-  const selectedBuyPriceFromOrderBook = useStore(
+  const selectedBuyPriceFromOrderBook = useOrderBookStore(
     (state) => state.selectedBuyPriceFromOrderBook,
   );
-  const setSelectedBuyPriceFromOrderBook = useStore(
+  const setSelectedBuyPriceFromOrderBook = useOrderBookStore(
     (state) => state.setSelectedBuyPriceFromOrderBook,
   );
-  const selectedSellPriceFromOrderBook = useStore(
+  const selectedSellPriceFromOrderBook = useOrderBookStore(
     (state) => state.selectedSellPriceFromOrderBook,
   );
-  const setSelectedSellPriceFromOrderBook = useStore(
+  const setSelectedSellPriceFromOrderBook = useOrderBookStore(
     (state) => state.setSelectedSellPriceFromOrderBook,
   );
 
-  const orderBooks = useStore((state) => state.orderBooks);
-  const addOrder = useStore((state) => state.addOrder);
-  const setBalance = useStore((state) => state.setBalance);
+  const orderBooks = useOrderBookStore((state) => state.orderBooks);
+  const addOrder = useOrderHistoryStore((state) => state.addOrder);
   const pair = `${baseCurrency}/${quoteCurrency}`;
   const orderBook = orderBooks[pair];
 
   useEffect(() => {
     if (orderType === "Limit") {
-      if (type === "Buy" && selectedBuyPriceFromOrderBook !== null) {
-        setPrice(selectedBuyPriceFromOrderBook.toString());
-      } else if (type === "Sell" && selectedSellPriceFromOrderBook !== null) {
+      if (type === "Buy" && selectedSellPriceFromOrderBook !== null) {
         setPrice(selectedSellPriceFromOrderBook.toString());
+      } else if (type === "Sell" && selectedBuyPriceFromOrderBook !== null) {
+        setPrice(selectedBuyPriceFromOrderBook.toString());
       }
     } else if (orderType === "Market") {
       if (type === "Buy" && orderBook.asks.length > 0) {
@@ -87,39 +87,11 @@ const OrderSection: React.FC<OrderSectionProps> = ({
       amount,
       priceUnit: quoteCurrency,
       amountUnit: baseCurrency,
-      orderCreationDate: new Date().toLocaleString("en-GB"),
-      orderCompleteDate:
-        orderType === "Market" ? new Date().toLocaleString("en-GB") : null,
+      orderCreationDate: new Date().toISOString(),
+      orderCompleteDate: orderType === "Market" ? new Date().toISOString() : "",
       status:
         orderType === "Market" ? ("Completed" as const) : ("Pending" as const),
     };
-
-    const priceValue = parseFloat(price);
-    const amountValue = parseFloat(amount);
-
-    if (orderType === "Market") {
-      if (type === "Buy") {
-        setBalance(
-          quoteCurrency,
-          useStore.getState().balances[quoteCurrency] -
-            priceValue * amountValue,
-        );
-        setBalance(
-          baseCurrency,
-          useStore.getState().balances[baseCurrency] + amountValue,
-        );
-      } else if (type === "Sell") {
-        setBalance(
-          baseCurrency,
-          useStore.getState().balances[baseCurrency] - amountValue,
-        );
-        setBalance(
-          quoteCurrency,
-          useStore.getState().balances[quoteCurrency] +
-            priceValue * amountValue,
-        );
-      }
-    }
 
     addOrder(newOrder);
   };
@@ -147,7 +119,9 @@ const OrderSection: React.FC<OrderSectionProps> = ({
       />
       <button
         className={`mt-4 w-full rounded py-2 text-white ${
-          !isBalanceValid ? "cursor-not-allowed opacity-50" : "hover:opacity-75"
+          !isBalanceValid || parseFloat(amount) <= 0
+            ? "cursor-not-allowed opacity-50"
+            : "hover:opacity-75"
         } ${color}`}
         disabled={!isBalanceValid}
         onClick={handleSubmit}

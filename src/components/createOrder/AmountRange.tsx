@@ -1,4 +1,5 @@
 import React from "react";
+import { AMOUNT_RANGE_STEPS } from "../../constants";
 
 interface AmountRangeProps {
   rangeValue: number;
@@ -22,17 +23,14 @@ const AmountRange: React.FC<AmountRangeProps> = ({
       onChange={handleRangeChange}
       disabled={disabled}
       className={`w-full cursor-pointer ${disabled ? "cursor-not-allowed opacity-50" : ""}`}
-      min="0"
-      max="100"
-      step="20"
+      min={AMOUNT_RANGE_STEPS[0]}
+      max={AMOUNT_RANGE_STEPS[AMOUNT_RANGE_STEPS.length - 1]}
+      step={AMOUNT_RANGE_STEPS[1] - AMOUNT_RANGE_STEPS[0]}
     />
     <div className="mt-2 flex justify-between text-sm text-gray-400">
-      <span>0%</span>
-      <span>20%</span>
-      <span>40%</span>
-      <span>60%</span>
-      <span>80%</span>
-      <span>100%</span>
+      {AMOUNT_RANGE_STEPS.map((step) => (
+        <span key={step}>{step}%</span>
+      ))}
     </div>
   </div>
 );
