@@ -1,10 +1,11 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import useOrderBookData from "../hooks/useOrderBookData";
 import formatPrice from "../utils/formatPrice";
 import useSelectedPairStore from "../store/useSelectedPairStore";
 import useOrderBookStore from "../store/useOrderBookStore";
 
 const OrderBook: React.FC = () => {
+  const [isLoading, setIsLoading] = useState(true); // Add loading state
   const pair = useSelectedPairStore((state) => state.selectedPair);
   const setSelectedBuyPriceFromOrderBook = useOrderBookStore(
     (state) => state.setSelectedBuyPriceFromOrderBook,
@@ -20,6 +21,14 @@ const OrderBook: React.FC = () => {
     "USDT" | "BTC" | "ETH" | "LTC" | "XRP",
     "USDT" | "BTC" | "ETH" | "LTC" | "XRP",
   ];
+
+  useEffect(() => {
+    if (orderBook?.asks.length === 0 && orderBook?.bids.length === 0) {
+      setIsLoading(true);
+    } else {
+      setIsLoading(false);
+    }
+  }, [orderBook]);
 
   return (
     <div className="w-[400px] rounded-lg border border-gray-700 bg-gray-800 p-4 text-white shadow-md">
@@ -43,25 +52,36 @@ const OrderBook: React.FC = () => {
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-700 bg-gray-800">
-                {orderBook?.asks.map((ask, index) => (
-                  <tr
-                    key={index}
-                    className="cursor-pointer bg-red-900 hover:bg-red-700"
-                    onClick={() =>
-                      setSelectedBuyPriceFromOrderBook(parseFloat(ask.price))
-                    }
-                  >
-                    <td className="px-4 py-2 text-sm text-red-400">
-                      {formatPrice(quoteCurrency, parseFloat(ask.price))}
-                    </td>
-                    <td className="px-4 py-2 text-right text-sm text-gray-300">
-                      {formatPrice(baseCurrency, parseFloat(ask.quantity))}
-                    </td>
-                    <td className="px-4 py-2 text-right text-sm text-gray-300">
-                      {formatPrice(quoteCurrency, parseFloat(ask.total))}
+                {isLoading ? (
+                  <tr>
+                    <td
+                      colSpan={3}
+                      className="px-4 py-6 text-center text-sm text-gray-300"
+                    >
+                      Loading...
                     </td>
                   </tr>
-                ))}
+                ) : (
+                  orderBook?.asks.map((ask, index) => (
+                    <tr
+                      key={index}
+                      className="cursor-pointer bg-red-900 hover:bg-red-700"
+                      onClick={() =>
+                        setSelectedBuyPriceFromOrderBook(parseFloat(ask.price))
+                      }
+                    >
+                      <td className="px-4 py-2 text-sm text-red-400">
+                        {formatPrice(quoteCurrency, parseFloat(ask.price))}
+                      </td>
+                      <td className="px-4 py-2 text-right text-sm text-gray-300">
+                        {formatPrice(baseCurrency, parseFloat(ask.quantity))}
+                      </td>
+                      <td className="px-4 py-2 text-right text-sm text-gray-300">
+                        {formatPrice(quoteCurrency, parseFloat(ask.total))}
+                      </td>
+                    </tr>
+                  ))
+                )}
               </tbody>
             </table>
           </div>
@@ -84,25 +104,36 @@ const OrderBook: React.FC = () => {
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-700 bg-gray-800">
-                {orderBook?.bids.map((bid, index) => (
-                  <tr
-                    key={index}
-                    className="cursor-pointer bg-green-900 hover:bg-green-700"
-                    onClick={() =>
-                      setSelectedSellPriceFromOrderBook(parseFloat(bid.price))
-                    }
-                  >
-                    <td className="px-4 py-2 text-sm text-green-400">
-                      {formatPrice(quoteCurrency, parseFloat(bid.price))}
-                    </td>
-                    <td className="px-4 py-2 text-right text-sm text-gray-300">
-                      {formatPrice(baseCurrency, parseFloat(bid.quantity))}
-                    </td>
-                    <td className="px-4 py-2 text-right text-sm text-gray-300">
-                      {formatPrice(quoteCurrency, parseFloat(bid.total))}
+                {isLoading ? (
+                  <tr>
+                    <td
+                      colSpan={3}
+                      className="px-4 py-6 text-center text-sm text-gray-300"
+                    >
+                      Loading...
                     </td>
                   </tr>
-                ))}
+                ) : (
+                  orderBook?.bids.map((bid, index) => (
+                    <tr
+                      key={index}
+                      className="cursor-pointer bg-green-900 hover:bg-green-700"
+                      onClick={() =>
+                        setSelectedSellPriceFromOrderBook(parseFloat(bid.price))
+                      }
+                    >
+                      <td className="px-4 py-2 text-sm text-green-400">
+                        {formatPrice(quoteCurrency, parseFloat(bid.price))}
+                      </td>
+                      <td className="px-4 py-2 text-right text-sm text-gray-300">
+                        {formatPrice(baseCurrency, parseFloat(bid.quantity))}
+                      </td>
+                      <td className="px-4 py-2 text-right text-sm text-gray-300">
+                        {formatPrice(quoteCurrency, parseFloat(bid.total))}
+                      </td>
+                    </tr>
+                  ))
+                )}
               </tbody>
             </table>
           </div>

@@ -49,10 +49,10 @@ const OrderSection: React.FC<OrderSectionProps> = ({
 
   useEffect(() => {
     if (orderType === "Limit") {
-      if (type === "Buy" && selectedBuyPriceFromOrderBook !== null) {
-        setPrice(selectedBuyPriceFromOrderBook.toString());
-      } else if (type === "Sell" && selectedSellPriceFromOrderBook !== null) {
+      if (type === "Buy" && selectedSellPriceFromOrderBook !== null) {
         setPrice(selectedSellPriceFromOrderBook.toString());
+      } else if (type === "Sell" && selectedBuyPriceFromOrderBook !== null) {
+        setPrice(selectedBuyPriceFromOrderBook.toString());
       }
     } else if (orderType === "Market") {
       if (type === "Buy" && orderBook.asks.length > 0) {

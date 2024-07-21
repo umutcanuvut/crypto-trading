@@ -5,6 +5,8 @@ import CreateOrder from "./components/createOrder/CreateOrder";
 import BalanceInfo from "./components/BalanceInfo";
 import OrderHistory from "./components/OrderHistory";
 import SelectPair from "./components/SelectPair";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const App = () => {
   return (
@@ -31,6 +33,7 @@ const App = () => {
         </div>
         <OrderHistory />
       </div>
+      <ToastContainer /> {/* Add this line to include ToastContainer */}
     </div>
   );
 };
